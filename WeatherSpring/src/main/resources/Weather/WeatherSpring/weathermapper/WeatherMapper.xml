@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Weather.WeatherSpring.weathermapper.WeatherMapper">
+
+	<select id="selectArea" resultType="Weather.WeatherSpring.weatherdto.AreaRequestDTO" parameterType="Map">
+		<choose>
+			<when test="type == 'city'">
+				SELECT
+					areacode, step1
+				FROM
+					tb_weather_area
+				WHERE
+					step2 = "" AND step3 = ""
+				ORDER BY
+					step1
+			</when>
+
+			<when test="type == 'county'">
+				SELECT
+					areacode, step2
+				FROM
+					tb_weather_area
+				WHERE
+					step1 = #{keyword} AND step3 = "" AND step2 != ""
+				ORDER BY
+					step2
+			</when>
+
+			<when test="type == 'town'">
+				SELECT
+					areacode, step3
+				FROM
+					tb_weather_area
+				WHERE
+					step2 = #{keyword} AND step3 != ""
+				ORDER BY
+					step3
+			</when>
+		</choose>
+	</select>
+
+	<select id="selectCoordinate" parameterType="String" resultType="Weather.WeatherSpring.weatherdto.AreaRequestDTO">
+		SELECT
+			gridX as nx, gridY as ny
+		FROM
+			tb_weather_area
+		WHERE
+			areacode = #{areacode}
+	</select>
+
+	<select id="selectSameCoordinateWeatherList" parameterType="Weather.WeatherSpring.weatherdto.AreaRequestDTO" resultType="Weather.WeatherSpring.weatherdto.WeatherDTO">
+		SELECT DISTINCT
+			baseDate, baseTime, category, nx, ny, obsrValue
+		FROM
+			tw_weather_response
+		WHERE
+			baseDate = #{baseDate} AND
+			baseTime = #{baseTime} AND
+			nx = #{nx} AND
+			ny = #{ny}
+	</select>
+
+	<insert id="insertWeatherList" parameterType="Weather.WeatherSpring.weatherdto.WeatherDTO">
+		INSERT INTO tw_weather_response(
+			baseDate
+			,baseTime
+			,category
+			,nx
+			,ny
+			,obsrValue
+		)
+		VALUES
+			<foreach collection="list" item="item" open="(" separator="),(" close=")">
+				#{item.baseDate}
+				,#{item.baseTime}
+				,#{item.category}
+				,#{item.nx}
+				,#{item.ny}
+				,#{item.obsrValue}
+			</foreach>
+	</insert>
+
+</mapper>

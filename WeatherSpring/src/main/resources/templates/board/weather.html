@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="board/layout/defaultLayout">
+
+<head layout:fragment="title">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/lib/Weather_container.css">
+<title>Weather</title>
+</head>
+
+
+<body layout:fragment="content">
+
+	<label>날씨</label>
+	
+	<div>
+		<h3>초단기예보를 조회하는 기능 입니다.<br>
+		1시간 단위로 조회가 가능하며 최대 24시간 전까지 조회 가능합니다.</h3>
+	</div>
+
+	<form class="form-horizontal">
+		<div class="form-group">
+			<select id="step1" class="emptyCheck" title="시/도">
+				<option id="city" value="">시/도</option>
+			</select> <select id="step2">
+				<option id="county" value="">시/군/구</option>
+			</select> <select id="step3">
+				<option id="town" value="">읍/면/동</option>
+			</select> <span>날짜 선택: <input type="text" id="datepicker"
+				disabled="disabled" class="emptyCheck" title="날짜"></span> <select
+				id="time" class="emptyCheck" title="시간">
+				<option value="" selected>시간</option>
+				<option th:each="i : ${#numbers.sequence(0,23)}" th:value="${i}"
+					th:text="${i} + 시"></option>
+			</select>
+
+			<button type="button"
+				class="btn btn-primary waves-effect waves-light"
+				th:onclick="getWeather()">
+				<span>실행</span>
+			</button>
+
+			<div>
+				<table id="resultWeather" class="table"></table>
+			</div>
+		</div>
+	</form>
+
+<script src="http://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+<script src="/lib/getweather.js"></script>
+<script src="/lib/datepicker.js"></script>
+</body>
+
+
+</html>
